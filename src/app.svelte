@@ -2,10 +2,22 @@
   import TasksForm from "./components/tasks-form.svelte";
   import TasksList from "./components/tasks-list.svelte";
   import type { Filter, Task } from "./types";
+  import { onMount } from "svelte";
 
   let message = "Tasks App";
   let currentFilter = $state<Filter>("all");
-  let tasks = $state<Task[]>([]);
+  let tasks = $state<Task[]>(
+    JSON.parse(
+      localStorage.getItem("tasks") || "[]"
+    ) as Task[]
+  );
+  $effect(() => {
+    localStorage.setItem(
+      "tasks",
+      JSON.stringify(tasks)
+    );
+  });
+
   let totalDone = $derived(
     tasks.reduce(
       (total, task) => total + Number(task.done),
@@ -98,3 +110,4 @@
     text-transform: capitalize;
   }
 </style>
+
